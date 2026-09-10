@@ -8,7 +8,6 @@ const rootURL = new URL(`/api/v1`, document.baseURI)
 export async function getRandomWord(): Promise<RandomWord> {
   // send a GET request to /api/v1/words/random and wait for the server to respond
   const response = await request.get(`${rootURL}/words/random`)
-  // backend sends a JSON shaped response containing lots of information
-  // only grab the one random word from the object
-  return response.body.word as RandomWord
+  // backend sends a JSON shaped response object
+  return response.body as RandomWord
 }
