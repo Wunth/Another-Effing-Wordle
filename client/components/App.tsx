@@ -1,4 +1,4 @@
-import Keyboard from "./Keyboard.tsx"
+import Keyboard from './Keyboard.tsx'
 
 function App() {
   return (
