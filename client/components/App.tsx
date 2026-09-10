@@ -1,3 +1,4 @@
+import Keyboard from './Keyboard.tsx'
 import GameBoard from './GameBoard.tsx'
 import NewGame from './NewGame.tsx'
 
@@ -15,6 +16,7 @@ function App() {
     <div className="flex flex-col items-center justify-center gap-6 min-h-screen">
       <NewGame />
       <GameBoard wordLength={5} guesses={[...fakeGuesses]} currentGuess="tr" />
+      <Keyboard />
     </div>
   )
 }
