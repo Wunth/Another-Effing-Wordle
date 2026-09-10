@@ -11,3 +11,13 @@ export async function getRandomWord(db = connection): Promise<Word> {
     .first()
   return word
 }
+
+// This function goes to the db and grabs one specific word by its id
+// Once a round has ended and the player needs to see the answer
+export async function getWordById(
+  id: number,
+  db = connection,
+): Promise<Word | undefined> {
+  const word = await db('words').where('id', id).first()
+  return word
+}
