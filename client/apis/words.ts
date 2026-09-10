@@ -1,11 +1,11 @@
 import request from 'superagent'
-import { Word } from '../../models/fruit'
+import { Word } from '../../models/word.ts'
 
 // builds the base address for every API call
 const rootURL = new URL(`/api/v1`, document.baseURI)
 
 // function calling the backend/server to get one random word
-export async function getRandomWord() {
+export async function getRandomWord(): Promise<Word> {
   // send a GET request to /api/v1/words/random and wait for the server to respond
   const response = await request.get(`${rootURL}/words/random`)
   // backend sends a JSON shaped response containing lots of information
