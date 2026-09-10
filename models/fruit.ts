@@ -1,8 +1,5 @@
-export interface Fruit {
+export interface Word {
   id: number
-  name: string
-}
-
-export interface FruitData {
-  name: string
+  word: string
+  length: number
 }
