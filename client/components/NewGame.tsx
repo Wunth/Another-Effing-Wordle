@@ -21,9 +21,6 @@ function NewGame() {
     <div className="new-game">
       {/* clicking New Game button calls mutate(), which fetches a new random word */}
       <button onClick={() => mutate()}>New Game</button>
-
-      {/* only show the word once data has actually loaded */}
-      {data && <p>Word: {data.word}</p>}
     </div>
   )
 }
