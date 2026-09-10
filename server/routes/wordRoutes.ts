@@ -12,13 +12,14 @@ router.get('/random', async (req, res) => {
     // call the db function to get a random word and wait
     const word = await db.getRandomWord()
 
-    // if no word came back or the table is empty, inform the frontend and stop
+    // if no word came back or the table is empty
+    // send 404 error (not 500 as it is not a server error)
     if (!word) {
-      return res.status(500).json({ message: 'No words found in the database' })
+      return res.status(404).json({message: 'No words found in the database'})
     }
 
-    // send the random word back to whoever made the request as JSON
-    res.json({ word })
+    // send id + length to the frontend (not the actual word)
+    res.json({ id: word.id, length: word.word.length })
 
     // if it fails or crashes, show an error message
   } catch (error) {
