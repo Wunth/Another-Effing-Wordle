@@ -1,8 +1,13 @@
 import request from 'superagent'
 
+// builds the base address for every API call
 const rootURL = new URL(`/api/v1`, document.baseURI)
 
-export async function getFruits() {
-  const response = await request.get(`${rootURL}/fruits`)
-  return response.body.fruits as string[]
+// function calling the backend/server to get one random word
+export async function getRandomWord() {
+  // send a GET request to /api/v1/words/random and wait for the server to respond
+  const response = await request.get(`${rootURL}/words/random`)
+  // backend sends a JSON shaped response containing lots of information
+  // only grab the one random word from the object
+  return response.body.word
 }
