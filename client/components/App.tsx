@@ -1,15 +1,19 @@
-import { useFruits } from '../hooks/useFruits.ts'
+import GameBoard from './GameBoard.tsx'
+
+// Temporary fake data just to visually test the grid — will be replaced once
+// Features 0-2 (word db, start game, check guess) are ready to plug in
+const fakeGuesses = [
+  {
+    guess: 'crane',
+    result: ['absent', 'present', 'correct', 'absent', 'absent'] as const,
+  },
+]
 
 function App() {
-  const { data } = useFruits()
-
   return (
-    <>
-      <div className="app">
-        <h1>Fullstack Boilerplate - with Fruits!</h1>
-        <ul>{data && data.map((fruit) => <li key={fruit}>{fruit}</li>)}</ul>
-      </div>
-    </>
+    <div className="flex min-h-screen items-center justify-center">
+      <GameBoard wordLength={5} guesses={[...fakeGuesses]} currentGuess="tr" />
+    </div>
   )
 }
 
