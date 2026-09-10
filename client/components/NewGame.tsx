@@ -18,9 +18,13 @@ function NewGame() {
   if (isError) return <p>No words found</p>
 
   return (
-    <div className="new-game">
-      {/* clicking New Game button calls mutate(), which fetches a new random word */}
-      <button onClick={() => mutate()}>New Game</button>
+    <div className="flex flex-col items-center gap-2">
+      <button
+        onClick={() => mutate()}
+        className="rounded-lg bg-blue-500 px-6 py-3 text-lg font-bold uppercase text-white hover:bg-blue-600"
+      >
+        New Game
+      </button>
     </div>
   )
 }

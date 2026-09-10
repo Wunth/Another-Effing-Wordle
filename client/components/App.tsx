@@ -12,7 +12,7 @@ const fakeGuesses = [
 
 function App() {
   return (
-    <div className="flex min-h-screen items-center justify-center">
+    <div className="flex flex-col items-center justify-center gap-6 min-h-screen">
       <NewGame />
       <GameBoard wordLength={5} guesses={[...fakeGuesses]} currentGuess="tr" />
     </div>
