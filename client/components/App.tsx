@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import GameBoard from './GameBoard.tsx'
 import NewGame from './NewGame.tsx'
 
@@ -11,6 +12,8 @@ const fakeGuesses = [
 ]
 
 function App() {
+
+  
   return (
     <div className="flex flex-col items-center justify-center gap-6 min-h-screen">
       <NewGame />
