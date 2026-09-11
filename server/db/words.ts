@@ -14,6 +14,8 @@ export async function getRandomWord(
   return word
 }
 
+// This function goes to the db and grabs one specific word by its id
+// Once a round has ended and the player needs to see the answer
 export async function getWordById(wordId: number, db = connection) {
   try {
     const word = await db('words').where({ id: wordId }).first()
