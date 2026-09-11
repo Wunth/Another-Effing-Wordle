@@ -3,6 +3,7 @@ import NewGame from './NewGame.tsx'
 import Keyboard from './Keyboard.tsx'
 import GiveUp from './GiveUp.tsx'
 import { useState } from 'react'
+import { LetterResult } from '../../models/word.ts'
 
 // Temporary fake data just to visually test the grid — will be replaced once
 // Features 0-2 (word db, start game, check guess) are ready to plug in
@@ -35,6 +36,19 @@ function App() {
   // It marks the current round as given up
   function handleGiveUp() {
     setGameStatus('gaveUp')
+  }
+
+  // Returns true only if every letter in the result came back 'correct'
+  function isWinningResult(result: LetterResult[]): boolean {
+    return result.every((letter) => letter === 'correct')
+  }
+
+  // This function gets called whenever a guess result comes back from the server
+  // Uses isWinningResult to check the result and updates gameStatus if it's a win
+  function handleWin(result: LetterResult[]){
+    if (isWinningResult(result)){
+      setGameStatus('won')
+    }
   }
 
   return (
