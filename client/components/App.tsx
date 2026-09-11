@@ -1,5 +1,6 @@
 import GameBoard from './GameBoard.tsx'
 import NewGame from './NewGame.tsx'
+import { useKeyPress } from '../hooks/useKeyPress.ts'
 import Keyboard from './Keyboard.tsx'
 import GiveUp from './GiveUp.tsx'
 import { useState } from 'react'
@@ -15,6 +16,10 @@ const fakeGuesses = [
 ]
 
 function App() {
+  const handleKeyPress = (key: string) => {
+    console.log(key)
+  }
+  useKeyPress(handleKeyPress)
   // Tracks whether the current round is still being played, was won, or was given up
   // Starts as 'playing' since a new word is immediately in-progress
   const [gameStatus, setGameStatus] = useState<'playing' | 'won' | 'gaveUp'>(
@@ -45,15 +50,14 @@ function App() {
 
   // This function gets called whenever a guess result comes back from the server
   // Uses isWinningResult to check the result and updates gameStatus if it's a win
-  function handleWin(result: LetterResult[]){
-    if (isWinningResult(result)){
+  function handleWin(result: LetterResult[]) {
+    if (isWinningResult(result)) {
       setGameStatus('won')
     }
   }
 
   return (
     <div className="flex flex-col items-center justify-center gap-6 min-h-screen">
-
       {/* NewGame needs sendWordInfo so it can report the new word's id/length back up to App */}
       <NewGame sendWordInfo={sendWordInfo} />
 
@@ -65,7 +69,7 @@ function App() {
         <GiveUp key={wordId} wordId={wordId} onGiveUp={handleGiveUp} />
       )}
 
-      <Keyboard />
+      <Keyboard handleKeyPress={handleKeyPress} />
     </div>
   )
 }
