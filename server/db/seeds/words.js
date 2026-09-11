@@ -30,7 +30,7 @@ export async function seed(knex) {
       success_message:
         'Balzak: scrotum (not to be confused with the French novelist Honoré de Balzac, which apparently used to happen to him a lot)',
     },
-    { word: 'dix', success_message: 'Too many dix on the dance floor' },
+    { word: 'dix', success_message: 'Too many of them on the dance floor' },
     {
       word: 'bewbs',
       success_message:

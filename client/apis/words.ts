@@ -1,5 +1,5 @@
 import request from 'superagent'
-import { RandomWord, Word } from '../../models/word'
+import { RandomWord, Word, CheckGuessResult } from '../../models/word'
 
 // builds the base address for every API call
 const rootURL = new URL(`/api/v1`, document.baseURI)
@@ -18,4 +18,16 @@ export async function revealWord(id: number): Promise<Word | string> {
   // send a GET request to /api/v1/words/:id/reveal & wait for the server to respond
   const response = await request.get(`${rootURL}/words/${id}/reveal`)
   return response.body.word
+}
+
+// function calling the backend/server to check a guess against the correct word
+export async function checkGuess(
+  wordId: number,
+  guess: string,
+): Promise<CheckGuessResult> {
+  // send a POST request to /api/v1/words/check with the wordId and guess
+  const response = await request
+    .post(`${rootURL}/words/check`)
+    .send({ wordId, guess })
+  return response.body as CheckGuessResult
 }

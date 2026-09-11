@@ -9,3 +9,8 @@ export interface RandomWord {
 }
 
 export type LetterResult = 'correct' | 'present' | 'absent'
+
+export interface CheckGuessResult {
+  result: LetterResult[]
+  message?: string
+}
