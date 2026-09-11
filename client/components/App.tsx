@@ -1,5 +1,6 @@
 import GameBoard from './GameBoard.tsx'
 import NewGame from './NewGame.tsx'
+import { StatsPanel } from './StatsPanel.tsx'
 import { useKeyPress } from '../hooks/useKeyPress.ts'
 import { useState } from 'react'
 import Keyboard from './Keyboard.tsx'
@@ -92,6 +93,8 @@ function App() {
       {wordId !== null && (
         <GiveUp key={wordId} wordId={wordId} onGiveUp={handleGiveUp} />
       )}
+
+      <StatsPanel />
 
       <Keyboard handleKeyPress={handleKeyPress} />
     </div>
