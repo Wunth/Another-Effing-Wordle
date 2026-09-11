@@ -7,3 +7,5 @@ export interface RandomWord {
   id: number
   length: number
 }
+
+export type LetterResult = 'correct' | 'present' | 'absent'

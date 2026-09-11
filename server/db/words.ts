@@ -2,7 +2,9 @@ import connection from './connection.ts'
 import { Word } from '../../models/word.ts'
 
 // This function goes to the db and grabs a random word
-export async function getRandomWord(db = connection): Promise<Word | undefined >{
+export async function getRandomWord(
+  db = connection,
+): Promise<Word | undefined> {
   // go to the words table
   const word = await db('words')
     // Put all the rows in a random order
@@ -14,10 +16,11 @@ export async function getRandomWord(db = connection): Promise<Word | undefined >
 
 // This function goes to the db and grabs one specific word by its id
 // Once a round has ended and the player needs to see the answer
-export async function getWordById(
-  id: number,
-  db = connection,
-): Promise<Word | undefined> {
-  const word = await db('words').where('id', id).first()
-  return word
+export async function getWordById(wordId: number, db = connection) {
+  try {
+    const word = await db('words').where({ id: wordId }).first()
+    return word
+  } catch (error) {
+    console.error(error)
+  }
 }
