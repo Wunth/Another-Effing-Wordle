@@ -25,11 +25,15 @@ function App() {
   const [wordId, setWordId] = useState<number | null>(null)
 
   // fallback length until a real word loads
-  const [wordLength, setWordLength] = useState(5)
+  const [wordLength, setWordLength] = useState(0)
 
   const { mutate: submitGuess } = useCheckGuess()
 
   const [currentGuess, setCurrentGuess] = useState('')
+
+  const [letterStatuses, setLetterStatuses] = useState<
+    Record<string, LetterResult>
+  >({})
 
   // This function gets called by NewGame once a new word has loaded
   // It saves the word's id/length and resets gameStatus + currentGuess + guesses
@@ -39,7 +43,28 @@ function App() {
     setWordLength(length)
     setCurrentGuess('')
     setGuesses([])
+    setLetterStatuses({})
     setGameStatus('playing')
+  }
+
+  function updateLetterStatuses(guess: string, result: LetterResult[]) {
+    setLetterStatuses((prev) => {
+      const next = { ...prev }
+      guess.split('').forEach((letter, i) => {
+        const newStatus = result[i]
+        const currentStatus = next[letter]
+
+        // only upgrade: correct > present > absent
+        if (
+          currentStatus === 'correct' ||
+          (currentStatus === 'present' && newStatus === 'absent')
+        ) {
+          return // keep the existing better status
+        }
+        next[letter] = newStatus
+      })
+      return next
+    })
   }
 
   // This function gets called by GiveUp once the word has been revealed
@@ -74,14 +99,14 @@ function App() {
       if (currentGuess.length !== wordLength || wordId === null) return
 
       submitGuess(
-        { wordId, guess: currentGuess.toLowerCase() },
+        { wordId, guess: currentGuess },
         {
           onSuccess: (data) => {
-            console.log('guess result:', currentGuess, data.result)
             setGuesses((prev) => [
               ...prev,
               { guess: currentGuess, result: data.result },
             ])
+            updateLetterStatuses(currentGuess, data.result)
             setCurrentGuess('')
             handleWin(data.result)
           },
@@ -91,7 +116,7 @@ function App() {
     }
     if (/^[a-z]$/i.test(key)) {
       setCurrentGuess((g) =>
-        g.length < wordLength ? g + key.toUpperCase() : g,
+        g.length < wordLength ? g + key.toLowerCase() : g,
       )
     }
   }
@@ -115,7 +140,10 @@ function App() {
 
       <StatsPanel />
 
-      <Keyboard handleKeyPress={handleKeyPress} />
+      <Keyboard
+        handleKeyPress={handleKeyPress}
+        letterStatuses={letterStatuses}
+      />
     </div>
   )
 }

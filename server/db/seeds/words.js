@@ -45,11 +45,11 @@ export async function seed(knex) {
       success_message: 'Well done, nothing wrong with phunbags!',
     },
     {
-      word: 'Muddafuh',
+      word: 'muddafuh',
       success_message:
         'Hey muddafuh, you been staring at me for the last 2 minutes?',
     },
-    { word: 'Mothertrucker', success_message: 'Big rig' },
+    { word: 'mothertrucker', success_message: 'Big rig' },
     {
       word: 'skibbidi',
       success_message: 'Correct! But nobody knows what it means.',
