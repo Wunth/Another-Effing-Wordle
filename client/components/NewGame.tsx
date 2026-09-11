@@ -14,10 +14,9 @@ interface NewGameProps {
 // Clicking it will fetch the id & length of the word
 function NewGame({ sendWordInfo }: NewGameProps) {
   // mutate: call this to trigger the fetch
-  // data: the word once it's loaded
   // isPending: true while the fetch is in progress
   // isError: true if the fetch failed
-  const { mutate, data, isPending, isError } = useNewGame()
+  const { mutate, isPending, isError } = useNewGame()
 
   // while the request is running, just show a loading message
   if (isPending) return <p>Loading...</p>
