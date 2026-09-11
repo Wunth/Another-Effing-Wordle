@@ -1,5 +1,5 @@
 import request from 'superagent'
-import { RandomWord } from '../../models/word'
+import { RandomWord, Word } from '../../models/word'
 
 // builds the base address for every API call
 const rootURL = new URL(`/api/v1`, document.baseURI)

@@ -1,7 +1,5 @@
 // Renders the guessing grid: one row per past guess (colored by result), plus the current in-progress row
-
-// The three possible outcomes for a guessed letter
-type LetterResult = 'correct' | 'present' | 'absent'
+import type { LetterResult } from '../../models/word'
 
 function GameBoard({
   wordLength,
