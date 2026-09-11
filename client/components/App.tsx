@@ -1,10 +1,11 @@
+import { useState } from 'react'
 import GameBoard from './GameBoard.tsx'
 import NewGame from './NewGame.tsx'
-import { StatsPanel } from './StatsPanel.tsx'
-import { useKeyPress } from '../hooks/useKeyPress.ts'
-import { useState } from 'react'
 import Keyboard from './Keyboard.tsx'
 import GiveUp from './GiveUp.tsx'
+import { StatsPanel } from './StatsPanel.tsx'
+import { useKeyPress } from '../hooks/useKeyPress.ts'
+import { useCheckGuess } from '../hooks/useCheckGuess.ts'
 import { LetterResult } from '../../models/word.ts'
 
 function App() {
@@ -15,7 +16,7 @@ function App() {
   )
 
   // Real guesses state. Starts empty since no guesses have been submitted yet.
-  const [guesses, setGuesses] = useState
+  const [guesses, setGuesses] = useState<
     { guess: string; result: LetterResult[] }[]
   >([])
 
@@ -25,6 +26,8 @@ function App() {
 
   // fallback length until a real word loads
   const [wordLength, setWordLength] = useState(5)
+
+  const { mutate: submitGuess } = useCheckGuess()
 
   const [currentGuess, setCurrentGuess] = useState('')
 
@@ -67,7 +70,23 @@ function App() {
     }
     if (key === 'enter') {
       // check if the conditions to submit an answer are met
-      // check result — will eventually call handleWin(result) with the server's response
+      // only submit once the guess is actually full-length
+      if (currentGuess.length !== wordLength || wordId === null) return
+
+      submitGuess(
+        { wordId, guess: currentGuess.toLowerCase() },
+        {
+          onSuccess: (data) => {
+            console.log('guess result:', currentGuess, data.result)
+            setGuesses((prev) => [
+              ...prev,
+              { guess: currentGuess, result: data.result },
+            ])
+            setCurrentGuess('')
+            handleWin(data.result)
+          },
+        },
+      )
       return
     }
     if (/^[a-z]$/i.test(key)) {
