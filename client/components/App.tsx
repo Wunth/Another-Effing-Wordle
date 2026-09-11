@@ -1,9 +1,10 @@
-import Keyboard from './Keyboard.tsx'
 import GameBoard from './GameBoard.tsx'
 import NewGame from './NewGame.tsx'
 import { useKeyPress } from '../hooks/useKeyPress.ts'
-import { useState, useCallback } from 'react'
-import type { LetterResult } from '../../models/word.ts'
+import { useState } from 'react'
+import Keyboard from './Keyboard.tsx'
+import GiveUp from './GiveUp.tsx'
+import { LetterResult } from '../../models/word.ts'
 
 function App() {
   // Tracks whether the current round is still being played, was won, or was given up
@@ -13,7 +14,7 @@ function App() {
   )
 
   // Real guesses state. Starts empty since no guesses have been submitted yet.
-  const [guesses, setGuesses] = useState<
+  const [guesses, setGuesses] = useState
     { guess: string; result: LetterResult[] }[]
   >([])
 
@@ -29,18 +30,13 @@ function App() {
   // This function gets called by NewGame once a new word has loaded
   // It saves the word's id/length and resets gameStatus + currentGuess + guesses
   // since a brand new word means a new round just started
-
-  // useCallback keeps this function's identity stable across App re-renders.
-  // NewGame's useEffect depends on this function (via the onNewWord prop), so
-  // without useCallback, every re-render (e.g. from typing) creates a new
-  // function reference, which re-triggers that effect and wipes currentGuess.
-  const sendWordInfo = useCallback((id: number, length: number) => {
+  function sendWordInfo(id: number, length: number) {
     setWordId(id)
     setWordLength(length)
     setCurrentGuess('')
     setGuesses([])
     setGameStatus('playing')
-  }, [])
+  }
 
   // This function gets called by GiveUp once the word has been revealed
   // It marks the current round as given up
@@ -83,12 +79,20 @@ function App() {
 
   return (
     <div className="flex flex-col items-center justify-center gap-6 min-h-screen">
+      {/* NewGame needs sendWordInfo so it can report the new word's id/length back up to App */}
       <NewGame onNewWord={sendWordInfo} />
       <GameBoard
         wordLength={wordLength}
         guesses={guesses}
         currentGuess={currentGuess}
       />
+
+      {/* Only render GiveUp once a word has actually loaded - before that, wordId is null and there's nothing to give up on. */}
+      {/* onGiveUp lets GiveUp tell App the round just ended, so gameStatus can update to 'gaveUp' */}
+      {wordId !== null && (
+        <GiveUp key={wordId} wordId={wordId} onGiveUp={handleGiveUp} />
+      )}
+
       <Keyboard handleKeyPress={handleKeyPress} />
     </div>
   )
