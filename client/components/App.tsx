@@ -14,25 +14,42 @@ const fakeGuesses = [
 ]
 
 function App() {
+  // Tracks whether the current round is still being played, was won, or was given up
+  // Starts as 'playing' since a new word is immediately in-progress
+  const [gameStatus, setGameStatus] = useState<'playing' | 'won' | 'gaveUp'>(
+    'playing',
+  )
+
   // holds the id of the word currently being played
   // starts as null because no word has been fetched yet when the page first loads
   const [wordId, setWordId] = useState<number | null>(null)
 
   // This function gets called by NewGame once a new word has loaded
-  // It's only job is to save that word's id into App's state so other components that need it (like GiveUp) can use it
+  // It saves the word's id and resets gameStatus back to 'playing' since a brand new word means a new round just started
   function sendWordInfo(id: number, length: number) {
     setWordId(id)
+    setGameStatus('playing')
+  }
+
+  // This function gets called by GiveUp once the word has been revealed
+  // It marks the current round as given up
+  function handleGiveUp() {
+    setGameStatus('gaveUp')
   }
 
   return (
     <div className="flex flex-col items-center justify-center gap-6 min-h-screen">
+
       {/* NewGame needs sendWordInfo so it can report the new word's id/length back up to App */}
       <NewGame sendWordInfo={sendWordInfo} />
 
       <GameBoard wordLength={5} guesses={[...fakeGuesses]} currentGuess="tr" />
 
-      {/* Only render GiveUp once a word has actually loaded - before that, wordId is null and there's nothing to give up on */}
-      {wordId !== null && <GiveUp key={wordId} wordId={wordId} />}
+      {/* Only render GiveUp once a word has actually loaded - before that, wordId is null and there's nothing to give up on. */}
+      {/*onGiveUp lets GiveUp tell App the round just ended, so gameStatus can update to 'gaveUp'*/}
+      {wordId !== null && (
+        <GiveUp key={wordId} wordId={wordId} onGiveUp={handleGiveUp} />
+      )}
 
       <Keyboard />
     </div>
