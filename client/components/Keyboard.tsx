@@ -1,7 +1,11 @@
+import type { LetterResult } from '../../models/word.ts'
+
 export default function Keyboard({
   handleKeyPress,
+  letterStatuses,
 }: {
   handleKeyPress: (key: string) => void
+  letterStatuses: Record<string, LetterResult>
 }) {
   const alphabet = [
     { key: 'a' },
@@ -32,19 +36,26 @@ export default function Keyboard({
     { key: 'z' },
   ]
 
+  function statusClass(letter: string) {
+    const status = letterStatuses[letter]
+    if (status === 'correct') return 'bg-green-500 text-white'
+    if (status === 'present') return 'bg-yellow-500 text-white'
+    if (status === 'absent') return 'bg-gray-400 text-white'
+    return 'bg-gray-200'
+  }
+
   return (
     <div className="keyboard">
-      {alphabet.map((letter) => {
-        return (
-          <button
-            key={letter.key}
-            type="button"
-            onClick={() => handleKeyPress(letter.key)}
-          >
-            {letter.key}
-          </button>
-        )
-      })}
+      {alphabet.map((letter) => (
+        <button
+          key={letter.key}
+          type="button"
+          onClick={() => handleKeyPress(letter.key)}
+          className={statusClass(letter.key)}
+        >
+          {letter.key}
+        </button>
+      ))}
       <button
         type="button"
         onClick={() => handleKeyPress('backspace')}
