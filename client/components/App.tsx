@@ -34,6 +34,7 @@ function App() {
   const [letterStatuses, setLetterStatuses] = useState<
     Record<string, LetterResult>
   >({})
+  const [winMessage, setWinMessage] = useState<string | null>(null)
 
   // This function gets called by NewGame once a new word has loaded
   // It saves the word's id/length and resets gameStatus + currentGuess + guesses
@@ -44,6 +45,7 @@ function App() {
     setCurrentGuess('')
     setGuesses([])
     setLetterStatuses({})
+    setWinMessage(null)
     setGameStatus('playing')
   }
 
@@ -109,6 +111,9 @@ function App() {
             updateLetterStatuses(currentGuess, data.result)
             setCurrentGuess('')
             handleWin(data.result)
+            if (data.message) {
+              setWinMessage(data.message)
+            }
           },
         },
       )
@@ -125,6 +130,9 @@ function App() {
   return (
     <div className="flex flex-col items-center justify-center gap-6 min-h-screen">
       {/* NewGame needs sendWordInfo so it can report the new word's id/length back up to App */}
+      {gameStatus === 'won' && winMessage && (
+        <p className="text-lg font-bold text-green-600">{winMessage}</p>
+      )}
       <NewGame onNewWord={sendWordInfo} />
       <GameBoard
         wordLength={wordLength}
