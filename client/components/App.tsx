@@ -130,15 +130,17 @@ function App() {
   return (
     <div className="flex flex-col items-center justify-center gap-6 min-h-screen">
       {/* NewGame needs sendWordInfo so it can report the new word's id/length back up to App */}
-      {gameStatus === 'won' && winMessage && (
-        <p className="text-lg font-bold text-green-600">{winMessage}</p>
-      )}
+
       <NewGame onNewWord={sendWordInfo} />
       <GameBoard
         wordLength={wordLength}
         guesses={guesses}
         currentGuess={currentGuess}
+        gameStatus={gameStatus}
       />
+      {gameStatus === 'won' && winMessage && (
+        <p className="text-lg font-bold text-green-600">{winMessage}</p>
+      )}
 
       {/* Only render GiveUp once a word has actually loaded - before that, wordId is null and there's nothing to give up on. */}
       {/* onGiveUp lets GiveUp tell App the round just ended, so gameStatus can update to 'gaveUp' */}

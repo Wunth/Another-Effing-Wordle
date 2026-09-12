@@ -5,10 +5,12 @@ function GameBoard({
   wordLength,
   guesses,
   currentGuess,
+  gameStatus,
 }: {
   wordLength: number
   guesses: { guess: string; result: LetterResult[] }[]
   currentGuess: string
+  gameStatus: 'playing' | 'won' | 'gaveUp'
 }) {
   // Returns the box color classes for one letter's result
   function colorFor(result: LetterResult) {
@@ -37,20 +39,22 @@ function GameBoard({
           ))}
         </div>
       ))}
-
+      {/* Only show the in-progress row while the round is still active */}
       {/* The row currently being typed, not scored yet */}
-      <div className="flex gap-2">
-        {/* Creates wordLength empty slots so we always draw the right number of boxes */}
-        {Array.from({ length: wordLength }).map((_, i) => (
-          <div
-            key={i}
-            className="flex h-12 w-12 items-center justify-center border-2 border-gray-300 text-xl font-bold uppercase"
-          >
-            {/* Show the typed letter at this position, or nothing */}
-            {currentGuess[i] ?? ''}
-          </div>
-        ))}
-      </div>
+      {gameStatus === 'playing' && (
+        <div className="flex gap-2">
+          {/* Creates wordLength empty slots so we always draw the right number of boxes */}
+          {Array.from({ length: wordLength }).map((_, i) => (
+            <div
+              key={i}
+              className="flex h-12 w-12 items-center justify-center border-2 border-gray-300 text-xl font-bold uppercase"
+            >
+              {/* Show the typed letter at this position, or nothing */}
+              {currentGuess[i] ?? ''}
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   )
 }

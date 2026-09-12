@@ -59,17 +59,20 @@ export default function Keyboard({
       <button
         type="button"
         onClick={() => handleKeyPress('backspace')}
-        style={{ width: '88px' }}
+        style={{ width: '48px' }}
+        className="bg-gray-200"
       >
         ⌫
       </button>
-      <button
-        type="button"
-        onClick={() => handleKeyPress('enter')}
-        style={{ width: '88px' }}
-      >
-        Enter
-      </button>
+      <div className="btn_enter">
+        <button
+          type="button"
+          onClick={() => handleKeyPress('enter')}
+          className="bg-gray-200"
+        >
+          Enter
+        </button>
+      </div>
     </div>
   )
 }
