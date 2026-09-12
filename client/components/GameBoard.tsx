@@ -24,7 +24,7 @@ function GameBoard({
   }
 
   return (
-    <div className="flex flex-col items-center gap-2">
+    <div className="guesses flex flex-col items-center gap-2">
       {/* One row per past guess */}
       {guesses.map((row, rowIndex) => (
         <div key={rowIndex} className="flex gap-2">

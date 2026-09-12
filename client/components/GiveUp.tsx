@@ -8,9 +8,10 @@ import { useGiveUp } from '../hooks/useGiveUp.ts'
 interface GiveUpProps {
   wordId: number
   onGiveUp: () => void
+  isRoundActive: boolean
 }
 
-function GiveUp({ wordId, onGiveUp }: GiveUpProps) {
+function GiveUp({ wordId, onGiveUp, isRoundActive }: GiveUpProps) {
   // mutate: call this function to trigger revealing the word
   // data: the revealed word
   // isPending: true while the reveal request is in progress
@@ -22,14 +23,21 @@ function GiveUp({ wordId, onGiveUp }: GiveUpProps) {
       {/* clicking Give Up calls mutate with this word's id, triggering revealWord(id) */}
       <button
         onClick={() => mutate(wordId, { onSuccess: () => onGiveUp() })}
-        className="rounded-lg bg-red-500 px-6 py-3 text-lg font-bold uppercase text-white hover:bg-red-600"
+        className={`rounded-lg bg-red-500 px-6 py-3 text-lg font-bold uppercase text-white hover:bg-red-600 ${
+          isRoundActive ? '' : 'hidden'
+        }`}
       >
         Give Up
       </button>
 
       {isPending && <p>Loading...</p>}
       {isError && <p>Could not reveal the word</p>}
-      {data && <p>The word was: {data}</p>}
+      {data && (
+        <>
+          <p>The word was:</p>
+          <p className="giveUpReveal">{data}</p>
+        </>
+      )}
     </div>
   )
 }
