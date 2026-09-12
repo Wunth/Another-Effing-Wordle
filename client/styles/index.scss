@@ -33,3 +33,47 @@ body {
 .keyboard .btn_enter button {
   width: 160px;
 }
+.giveUpReveal {
+  font-weight: bold;
+}
+
+
+.bg-green-500.border-green-500 {
+  animation: flip 0.5s ease forwards;
+}
+.bg-yellow-500.border-yellow-500 {
+  animation: flip 0.6s ease forwards;
+}
+.bg-gray-400.border-gray-400 {
+  animation: flip 0.6s ease forwards;
+}
+
+/* keyframe animations */
+@keyframes flip {
+  0% {
+    transform: rotateX(0);
+  }
+  45% {
+    transform: rotateX(90deg);
+  }
+  55% {
+    transform: rotateX(90deg);
+  }
+  100% {
+    transform: rotateX(0deg);
+  }
+}
+
+@keyframes bounce {
+  0% { 
+    transform: scale(1);
+    border-color: #ddd;
+  }
+  50% { 
+    transform: scale(1.2);
+  }
+  100% {
+    transform: scale(1);
+    border-color: #333;
+  }
+}
