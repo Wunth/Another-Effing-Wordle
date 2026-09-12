@@ -6,15 +6,20 @@ body {
 }
 
 .keyboard {
-  max-width: 500px;
+  max-width: 510px;
   margin: 20px auto;
 }
-.keyboard > button {
+.keyboard {
+  max-width: 510px;
+  margin: 20px auto;
+  text-align: center;
+}
+.keyboard button {
   border: none;
   font: inherit;
   cursor: pointer;
   margin: 4px;
-  width: 40px;
+  width: 48px;
   height: 50px;
   /*background: #d3d6da;*/
   display: inline-block;
@@ -24,4 +29,7 @@ body {
   font-weight: bold;
   font-size: 1.4rem;
   text-transform: capitalize;
+}
+.keyboard .btn_enter button {
+  width: 160px;
 }
