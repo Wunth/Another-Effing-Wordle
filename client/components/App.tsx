@@ -3,6 +3,7 @@ import GameBoard from './GameBoard.tsx'
 import NewGame from './NewGame.tsx'
 import Keyboard from './Keyboard.tsx'
 import GiveUp from './GiveUp.tsx'
+import Popup from './Popup.tsx'
 import { StatsPanel } from './StatsPanel.tsx'
 import { useKeyPress } from '../hooks/useKeyPress.ts'
 import { useCheckGuess } from '../hooks/useCheckGuess.ts'
@@ -36,6 +37,10 @@ function App() {
   >({})
   const [winMessage, setWinMessage] = useState<string | null>(null)
 
+  // Tracks whether the end-of-round popup is currently visible (separate from
+  // gameStatus so the player can manually close it without losing their result)
+  const [showPopup, setShowPopup] = useState(false)
+
   // This function gets called by NewGame once a new word has loaded
   // It saves the word's id/length and resets gameStatus + currentGuess + guesses
   // since a brand new word means a new round just started
@@ -47,6 +52,7 @@ function App() {
     setLetterStatuses({})
     setWinMessage(null)
     setGameStatus('playing')
+    setShowPopup(false)
   }
 
   function updateLetterStatuses(guess: string, result: LetterResult[]) {
@@ -73,6 +79,7 @@ function App() {
   // It marks the current round as given up
   function handleGiveUp() {
     setGameStatus('gaveUp')
+    setShowPopup(true)
   }
 
   // Returns true only if every letter in the result came back 'correct'
@@ -85,6 +92,7 @@ function App() {
   function handleWin(result: LetterResult[]) {
     if (isWinningResult(result)) {
       setGameStatus('won')
+      setShowPopup(true)
     }
   }
 
@@ -138,14 +146,19 @@ function App() {
         currentGuess={currentGuess}
         gameStatus={gameStatus}
       />
-      {gameStatus === 'won' && winMessage && (
-        <p
-          className="text-lg font-bold text-green-600"
-          style={{ maxWidth: '510px' }}
-        >
-          {winMessage}
-        </p>
-      )}
+
+      <Popup isOpen={showPopup} onClose={() => setShowPopup(false)}>
+        {gameStatus === 'won' && (
+          <p className="text-lg font-bold text-green-600">
+            {winMessage ?? 'You got it!'}
+          </p>
+        )}
+        {gameStatus === 'gaveUp' && (
+          <p className="text-lg font-bold text-gray-600">
+            Better luck next time!
+          </p>
+        )}
+      </Popup>
 
       {/* Only show GiveUp once a word has actually loaded - before that, wordId is null and there's nothing to give up on. */}
       {/* onGiveUp lets GiveUp tell App the round just ended, so gameStatus can update to 'gaveUp' */}
