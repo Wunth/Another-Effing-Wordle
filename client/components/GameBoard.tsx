@@ -47,7 +47,7 @@ function GameBoard({
           {Array.from({ length: wordLength }).map((_, i) => (
             <div
               key={i}
-              className="flex h-12 w-12 items-center justify-center border-2 border-gray-300 text-xl font-bold uppercase"
+              className="flex h-12 w-12 items-center justify-center border-2 border-gray-600 bg-gray-800 text-xl font-bold uppercase text-white"
             >
               {/* Show the typed letter at this position, or nothing */}
               {currentGuess[i] ?? ''}
