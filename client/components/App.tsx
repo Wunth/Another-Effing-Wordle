@@ -128,7 +128,21 @@ function App() {
   useKeyPress(handleKeyPress)
 
   return (
-    <div className="flex flex-col items-center justify-center gap-6 min-h-screen">
+    <div className="flex flex-col items-center justify-center gap-6 min-h-screen pt-40">
+      <header className="fixed top-4 left-1/2 -translate-x-1/2 w-2/3 flex flex-col items-center justify-center px-6 pt-6 pb-4 z-10 rounded-full bg-gray-500/30 backdrop-blur-sm">
+        <h1
+          className="text-8xl font-bold text-yellow-400"
+          style={{ fontFamily: 'Bungee, cursive' }}
+        >
+          AFW
+        </h1>
+        <p
+          className="italic text-sm text-gray-300"
+          style={{ fontFamily: 'Fredoka, sans-serif' }}
+        >
+          another fricking wordle
+        </p>
+      </header>
       {/* NewGame needs sendWordInfo so it can report the new word's id/length back up to App */}
 
       <NewGame onNewWord={sendWordInfo} />

@@ -41,7 +41,7 @@ export default function Keyboard({
     if (status === 'correct') return 'bg-green-500 text-white'
     if (status === 'present') return 'bg-yellow-500 text-white'
     if (status === 'absent') return 'bg-gray-400 text-white'
-    return 'bg-gray-200'
+    return 'bg-gray-700 text-white'
   }
 
   return (
@@ -60,7 +60,7 @@ export default function Keyboard({
         type="button"
         onClick={() => handleKeyPress('backspace')}
         style={{ width: '48px' }}
-        className="bg-gray-200"
+        className="bg-gray-700 text-white"
       >
         ⌫
       </button>
@@ -68,7 +68,7 @@ export default function Keyboard({
         <button
           type="button"
           onClick={() => handleKeyPress('enter')}
-          className="bg-gray-200"
+          className="bg-gray-700 text-white"
         >
           Enter
         </button>
