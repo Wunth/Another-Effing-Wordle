@@ -31,7 +31,8 @@ function NewGame({
             onSuccess: (data) => onNewWord(data.id, data.length),
           })
         }
-        className="rounded-lg bg-blue-500 px-6 py-3 text-lg font-bold uppercase text-white hover:bg-blue-600"
+        className="w-40 rounded-lg bg-blue-500 px-6 py-3 text-lg font-bold uppercase text-white hover:bg-blue-600"
+        style={{ fontFamily: 'Bungee, cursive' }}
       >
         New Game
       </button>

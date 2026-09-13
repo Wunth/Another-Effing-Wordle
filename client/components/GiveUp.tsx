@@ -23,9 +23,10 @@ function GiveUp({ wordId, onGiveUp, isRoundActive }: GiveUpProps) {
       {/* clicking Give Up calls mutate with this word's id, triggering revealWord(id) */}
       <button
         onClick={() => mutate(wordId, { onSuccess: () => onGiveUp() })}
-        className={`rounded-lg bg-red-500 px-6 py-3 text-lg font-bold uppercase text-white hover:bg-red-600 ${
+        className={`w-40 rounded-lg bg-red-500 px-6 py-3 text-lg font-bold uppercase text-white hover:bg-red-600 ${
           isRoundActive ? '' : 'hidden'
         }`}
+        style={{ fontFamily: 'Bungee, cursive' }}
       >
         Give Up
       </button>
