@@ -8,6 +8,7 @@ import { StatsPanel } from './StatsPanel.tsx'
 import { useKeyPress } from '../hooks/useKeyPress.ts'
 import { useCheckGuess } from '../hooks/useCheckGuess.ts'
 import { LetterResult } from '../../models/word.ts'
+import { useConfettiRain } from '../hooks/useConfettiRain.ts'
 
 function App() {
   // Tracks whether the current round is still being played, was won, or was given up
@@ -29,6 +30,9 @@ function App() {
   const [wordLength, setWordLength] = useState(0)
 
   const { mutate: submitGuess } = useCheckGuess()
+
+  // Gives us a function to trigger the confetti burst on a win
+  const { triggerConfettiRain } = useConfettiRain()
 
   const [currentGuess, setCurrentGuess] = useState('')
 
@@ -93,6 +97,7 @@ function App() {
     if (isWinningResult(result)) {
       setGameStatus('won')
       setShowPopup(true)
+      triggerConfettiRain()
     }
   }
 
