@@ -143,9 +143,23 @@ function App() {
           another fricking wordle
         </p>
       </header>
-      {/* NewGame needs sendWordInfo so it can report the new word's id/length back up to App */}
+      {/* NewGame and GiveUp sit side by side under the title */}
+      <div className="flex flex-row gap-4">
+        {/* NewGame needs sendWordInfo so it can report the new word's id/length back up to App */}
+        <NewGame onNewWord={sendWordInfo} />
 
-      <NewGame onNewWord={sendWordInfo} />
+        {/* Only show GiveUp once a word has actually loaded - before that, wordId is null and there's nothing to give up on. */}
+        {/* onGiveUp lets GiveUp tell App the round just ended, so gameStatus can update to 'gaveUp' */}
+        {wordId !== null && (
+          <GiveUp
+            key={wordId}
+            wordId={wordId}
+            onGiveUp={handleGiveUp}
+            isRoundActive={gameStatus === 'playing'}
+          />
+        )}
+      </div>
+
       <GameBoard
         wordLength={wordLength}
         guesses={guesses}
@@ -159,17 +173,6 @@ function App() {
         >
           {winMessage}
         </p>
-      )}
-
-      {/* Only show GiveUp once a word has actually loaded - before that, wordId is null and there's nothing to give up on. */}
-      {/* onGiveUp lets GiveUp tell App the round just ended, so gameStatus can update to 'gaveUp' */}
-      {wordId !== null && (
-        <GiveUp
-          key={wordId}
-          wordId={wordId}
-          onGiveUp={handleGiveUp}
-          isRoundActive={gameStatus === 'playing'}
-        />
       )}
 
       <StatsPanel />
