@@ -3,11 +3,16 @@ import GameBoard from './GameBoard.tsx'
 import NewGame from './NewGame.tsx'
 import Keyboard from './Keyboard.tsx'
 import GiveUp from './GiveUp.tsx'
+import Popup from './Popup.tsx'
 import { StatsPanel } from './StatsPanel.tsx'
 import { useKeyPress } from '../hooks/useKeyPress.ts'
 import { useCheckGuess } from '../hooks/useCheckGuess.ts'
 import { LetterResult } from '../../models/word.ts'
 import Account from './Account.tsx'
+import { useConfettiRain } from '../hooks/useConfettiRain.ts'
+import siuuuSound from '../assets/sounds/siuuu.mp3'
+
+const winSound = new Audio(siuuuSound)
 
 function App() {
   // Tracks whether the current round is still being played, was won, or was given up
@@ -30,12 +35,19 @@ function App() {
 
   const { mutate: submitGuess } = useCheckGuess()
 
+  // Gives us a function to trigger the confetti burst on a win
+  const { triggerConfettiRain } = useConfettiRain()
+
   const [currentGuess, setCurrentGuess] = useState('')
 
   const [letterStatuses, setLetterStatuses] = useState<
     Record<string, LetterResult>
   >({})
   const [winMessage, setWinMessage] = useState<string | null>(null)
+
+  // Tracks whether the end-of-round popup is currently visible (separate from
+  // gameStatus so the player can manually close it without losing their result)
+  const [showPopup, setShowPopup] = useState(false)
 
   // This function gets called by NewGame once a new word has loaded
   // It saves the word's id/length and resets gameStatus + currentGuess + guesses
@@ -48,6 +60,7 @@ function App() {
     setLetterStatuses({})
     setWinMessage(null)
     setGameStatus('playing')
+    setShowPopup(false)
   }
 
   function updateLetterStatuses(guess: string, result: LetterResult[]) {
@@ -74,6 +87,7 @@ function App() {
   // It marks the current round as given up
   function handleGiveUp() {
     setGameStatus('gaveUp')
+    setShowPopup(true)
   }
 
   // Returns true only if every letter in the result came back 'correct'
@@ -85,7 +99,10 @@ function App() {
   // Uses isWinningResult to check the result and updates gameStatus if it's a win
   function handleWin(result: LetterResult[]) {
     if (isWinningResult(result)) {
+      winSound.play()
       setGameStatus('won')
+      setShowPopup(true)
+      triggerConfettiRain()
     }
   }
 
@@ -129,37 +146,59 @@ function App() {
   useKeyPress(handleKeyPress)
 
   return (
-    <div className="flex flex-col items-center justify-center gap-6 min-h-screen">
-      {/* NewGame needs sendWordInfo so it can report the new word's id/length back up to App */}
+    <div className="flex flex-col items-center justify-center gap-6 min-h-screen pt-40">
+      <header className="fixed top-4 left-1/2 -translate-x-1/2 w-2/3 flex flex-col items-center justify-center px-6 pt-6 pb-4 z-10 rounded-full bg-gray-500/30 backdrop-blur-sm">
+        <h1
+          className="text-8xl font-bold text-yellow-400"
+          style={{ fontFamily: 'Bungee, cursive' }}
+        >
+          AFW
+        </h1>
+        <p
+          className="italic text-sm text-gray-300"
+          style={{ fontFamily: 'Fredoka, sans-serif' }}
+        >
+          another fricking wordle
+        </p>
+      </header>
+      {/* NewGame and GiveUp sit side by side under the title */}
+      <div className="flex flex-row gap-4">
+        {/* NewGame needs sendWordInfo so it can report the new word's id/length back up to App */}
+        <NewGame onNewWord={sendWordInfo} />
 
-      <NewGame onNewWord={sendWordInfo} />
+        {/* Only show GiveUp once a word has actually loaded - before that, wordId is null and there's nothing to give up on. */}
+        {/* onGiveUp lets GiveUp tell App the round just ended, so gameStatus can update to 'gaveUp' */}
+        {wordId !== null && (
+          <GiveUp
+            key={wordId}
+            wordId={wordId}
+            onGiveUp={handleGiveUp}
+            isRoundActive={gameStatus === 'playing'}
+          />
+        )}
+      </div>
+
       <GameBoard
         wordLength={wordLength}
         guesses={guesses}
         currentGuess={currentGuess}
         gameStatus={gameStatus}
       />
-      {gameStatus === 'won' && winMessage && (
-        <p
-          className="text-lg font-bold text-green-600"
-          style={{ maxWidth: '510px' }}
-        >
-          {winMessage}
-        </p>
-      )}
 
-      {/* Only show GiveUp once a word has actually loaded - before that, wordId is null and there's nothing to give up on. */}
-      {/* onGiveUp lets GiveUp tell App the round just ended, so gameStatus can update to 'gaveUp' */}
-      {wordId !== null && (
-        <GiveUp
-          key={wordId}
-          wordId={wordId}
-          onGiveUp={handleGiveUp}
-          isRoundActive={gameStatus === 'playing'}
-        />
-      )}
+      <Popup isOpen={showPopup} onClose={() => setShowPopup(false)}>
+        {gameStatus === 'won' && (
+          <p className="text-lg font-bold text-green-600">
+            {winMessage ?? 'You got it!'}
+          </p>
+        )}
+        {gameStatus === 'gaveUp' && (
+          <p className="text-lg font-bold text-gray-600">
+            Better luck next time!
+          </p>
+        )}
+      </Popup>
 
-      <StatsPanel />
+      <StatsPanel guessCount={guesses.length} />
 
       <Keyboard
         handleKeyPress={handleKeyPress}

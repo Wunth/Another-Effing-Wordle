@@ -1,13 +1,20 @@
 import { useStats } from '../hooks/use-stats'
 
-export function StatsPanel() {
+// guessCount tells us if the player has made a guess in the current round
+export function StatsPanel({ guessCount }: { guessCount: number }) {
   // Fetch stats from the custom hook
   const { gamesPlayed, wins, averageGuesses } = useStats()
 
-  // If no games have been played yet, show the empty state message
-  if (gamesPlayed === 0) {
+  // Show the message whenever the current round has no guesses yet —
+  // regardless of how many games have been played before
+  if (guessCount === 0) {
     return (
-      <div className="afw-stats-empty">No rounds played yet. Take a guess!</div>
+      <div
+        className="afw-stats-empty italic"
+        style={{ fontFamily: 'Bungee, cursive' }}
+      >
+        Too much silence, not enough guessing.
+      </div>
     )
   }
 
