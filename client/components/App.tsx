@@ -193,7 +193,7 @@ function App() {
         )}
       </Popup>
 
-      <StatsPanel />
+      <StatsPanel guessCount={guesses.length} />
 
       <Keyboard
         handleKeyPress={handleKeyPress}
