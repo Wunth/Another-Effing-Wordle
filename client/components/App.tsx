@@ -7,6 +7,7 @@ import { StatsPanel } from './StatsPanel.tsx'
 import { useKeyPress } from '../hooks/useKeyPress.ts'
 import { useCheckGuess } from '../hooks/useCheckGuess.ts'
 import { LetterResult } from '../../models/word.ts'
+import Account from './Account.tsx'
 
 function App() {
   // Tracks whether the current round is still being played, was won, or was given up
@@ -164,6 +165,7 @@ function App() {
         handleKeyPress={handleKeyPress}
         letterStatuses={letterStatuses}
       />
+      <Account />
     </div>
   )
 }
