@@ -8,6 +8,7 @@ import { StatsPanel } from './StatsPanel.tsx'
 import { useKeyPress } from '../hooks/useKeyPress.ts'
 import { useCheckGuess } from '../hooks/useCheckGuess.ts'
 import { LetterResult } from '../../models/word.ts'
+import Account from './Account.tsx'
 import { useConfettiRain } from '../hooks/useConfettiRain.ts'
 import siuuuSound from '../assets/sounds/siuuu.mp3'
 
@@ -203,6 +204,7 @@ function App() {
         handleKeyPress={handleKeyPress}
         letterStatuses={letterStatuses}
       />
+      <Account />
     </div>
   )
 }

@@ -9,7 +9,7 @@ export async function seed(knex) {
     { word: 'phuck', success_message: 'Well done - you didnt phuck it up!' },
     {
       word: 'phuckinell',
-      success_message: "Phuckinell, you've bloody done it!",
+      success_message: "Phuckinell, you've only gone and bloody done it!",
     },
     {
       word: 'givsaphuck',
@@ -18,7 +18,7 @@ export async function seed(knex) {
     },
     {
       word: 'furkinell',
-      success_message: '"Furkinell you solved that AFW!", said noone ever.',
+      success_message: '"Furkinell you solved the AFW!", said noone ever.',
     },
     { word: 'schidabryk', success_message: 'Not enough fibre' },
     {
@@ -30,7 +30,7 @@ export async function seed(knex) {
       success_message:
         'Balzak: scrotum (not to be confused with the French novelist Honoré de Balzac, which apparently used to happen to him a lot)',
     },
-    { word: 'dix', success_message: 'Too many of them on the dance floor' },
+    { word: 'dix', success_message: 'Too many on the dance floor' },
     {
       word: 'bewbs',
       success_message:
@@ -52,11 +52,15 @@ export async function seed(knex) {
     { word: 'mothertrucker', success_message: 'Big rig' },
     {
       word: 'skibbidi',
-      success_message: 'Correct! But nobody knows what it means.',
+      success_message: "Correct! Don't ask me what it means.",
     },
     {
-      word: 'bloodyhayew',
+      word: 'blawdyhayew',
       success_message: 'What the bloodyhayew was that all about?',
+    },
+    {
+      word: 'dafuk',
+      success_message: 'What dafuk was that all about?',
     },
   ])
 }
