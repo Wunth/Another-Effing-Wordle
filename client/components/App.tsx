@@ -175,7 +175,7 @@ function App() {
         </p>
       )}
 
-      <StatsPanel />
+      <StatsPanel guessCount={guesses.length} />
 
       <Keyboard
         handleKeyPress={handleKeyPress}
