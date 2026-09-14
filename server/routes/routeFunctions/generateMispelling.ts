@@ -48,7 +48,7 @@ const ipaToLatinMap = {
   ʊə: ['oor', 'tour', 'ure'],
 }
 
-export function generateMisspelling(word: string, phrase?: string[]): string {
+export function generateMisspelling(word: string, phrase?: string): string {
   const wordArray = word.split('')
   const misspelledArray = wordArray.map((letter) => {
     if (!ipaToLatinMap[letter]) {
