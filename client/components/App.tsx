@@ -9,6 +9,9 @@ import { useKeyPress } from '../hooks/useKeyPress.ts'
 import { useCheckGuess } from '../hooks/useCheckGuess.ts'
 import { LetterResult } from '../../models/word.ts'
 import { useConfettiRain } from '../hooks/useConfettiRain.ts'
+import siuuuSound from '../assets/sounds/siuuu.mp3'
+
+const winSound = new Audio(siuuuSound)
 
 function App() {
   // Tracks whether the current round is still being played, was won, or was given up
@@ -95,6 +98,7 @@ function App() {
   // Uses isWinningResult to check the result and updates gameStatus if it's a win
   function handleWin(result: LetterResult[]) {
     if (isWinningResult(result)) {
+      winSound.play()
       setGameStatus('won')
       setShowPopup(true)
       triggerConfettiRain()
@@ -193,7 +197,7 @@ function App() {
         )}
       </Popup>
 
-      <StatsPanel />
+      <StatsPanel guessCount={guesses.length} />
 
       <Keyboard
         handleKeyPress={handleKeyPress}
