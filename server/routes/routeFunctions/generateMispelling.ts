@@ -9,12 +9,12 @@ const ipaToLatinMap = {
   m: ['m', 'mm', 'mb', 'mn', 'me'],
   n: ['n', 'nn', 'kn', 'gn', 'pn'],
   ŋ: ['ng', 'n', 'nc', 'ngue'],
-  f: ['f', 'ff', 'ph', 'gh', 'fe'],
+  f: ['f', 'ff', 'ph', 'fe'],
   v: ['v', 'vv', 've', 'f'],
   θ: ['th'],
   ð: ['th', 'the'],
   s: ['s', 'ss', 'c', 'sc', 'ps', 'st', 'ce'],
-  z: ['z', 'zz', 's', 'ss', 'x', 'ze'],
+  z: ['z', 'zz', 's', 'ss', 'ze'],
   ʃ: ['sh', 'ch', 'ti', 'ci', 's', 'ssi', 'sci'],
   ʒ: ['s', 'si', 'z', 'ge', 'g'],
   h: ['h', 'wh'],
@@ -48,17 +48,20 @@ const ipaToLatinMap = {
   ʊə: ['oor', 'tour', 'ure'],
 }
 
-const words = ['hello', 'world', 'typescript', 'javascript']
-
-export function generateMisspelling(word: string): string {
+export function generateMisspelling(word: string, phrase?: string[]): string {
   const wordArray = word.split('')
   const misspelledArray = wordArray.map((letter) => {
     if (!ipaToLatinMap[letter]) {
       return letter
     }
-    return ipaToLatinMap[letter][
-      Math.floor(Math.random() * ipaToLatinMap[letter].length)
-    ]
+    const coinFlip = Math.random() < 0.5
+    if (coinFlip) {
+      return letter
+    } else {
+      return ipaToLatinMap[letter][
+        Math.floor(Math.random() * ipaToLatinMap[letter].length)
+      ]
+    }
   })
   return misspelledArray.join('')
 }
