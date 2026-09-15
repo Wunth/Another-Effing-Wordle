@@ -11,6 +11,8 @@ import { LetterResult } from '../../models/word.ts'
 import Account from './Account.tsx'
 import { useConfettiRain } from '../hooks/useConfettiRain.ts'
 import siuuuSound from '../assets/sounds/siuuu.mp3'
+import { useAuth0 } from '@auth0/auth0-react'
+import { submitGame } from '../apis/words.ts'
 
 const winSound = new Audio(siuuuSound)
 
@@ -49,12 +51,16 @@ function App() {
   // gameStatus so the player can manually close it without losing their result)
   const [showPopup, setShowPopup] = useState(false)
 
+  const { getAccessTokenSilently, isAuthenticated } = useAuth0()
+  const [startTime, setStartTime] = useState<Date | null>(null)
+
   // This function gets called by NewGame once a new word has loaded
   // It saves the word's id/length and resets gameStatus + currentGuess + guesses
   // since a brand new word means a new round just started
   function sendWordInfo(id: number, length: number) {
     setWordId(id)
     setWordLength(length)
+    setStartTime(new Date())
     setCurrentGuess('')
     setGuesses([])
     setLetterStatuses({})
@@ -97,12 +103,18 @@ function App() {
 
   // This function gets called whenever a guess result comes back from the server
   // Uses isWinningResult to check the result and updates gameStatus if it's a win
-  function handleWin(result: LetterResult[]) {
+  async function handleWin(result: LetterResult[]) {
     if (isWinningResult(result)) {
       winSound.play()
       setGameStatus('won')
       setShowPopup(true)
       triggerConfettiRain()
+
+      // only logged-in players get their win recorded
+      if (isAuthenticated && wordId !== null && startTime !== null) {
+        const token = await getAccessTokenSilently()
+        await submitGame({ wordId, startTime, endTime: new Date() }, token)
+      }
     }
   }
 
