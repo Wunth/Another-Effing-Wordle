@@ -13,8 +13,7 @@ import { useConfettiRain } from '../hooks/useConfettiRain.ts'
 import siuuuSound from '../assets/sounds/siuuu.mp3'
 import { useFireRain } from '../hooks/useFireRain.ts'
 import { useAuth0 } from '@auth0/auth0-react'
-import { submitGame } from '../apis/words.ts'
-import { Link } from 'react-router'
+import { submitGame } from '../apis/games.ts'
 
 const winSound = new Audio(siuuuSound)
 
@@ -182,14 +181,6 @@ function App() {
           another fricking wordle
         </p>
       </header>
-
-      <Link
-        to="/stats"
-        className="fixed left-24 top-96 flex h-40 items-center justify-center rounded-lg bg-blue-500 px-6 py-3 text-lg font-bold uppercase text-white hover:bg-blue-600"
-        style={{ fontFamily: 'Bungee, cursive' }}
-      >
-        View Stats
-      </Link>
 
       {/* NewGame and GiveUp sit side by side under the title */}
       <div className="flex flex-row gap-4">
