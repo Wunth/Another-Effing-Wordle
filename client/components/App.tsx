@@ -11,6 +11,7 @@ import { LetterResult } from '../../models/word.ts'
 import Account from './Account.tsx'
 import { useConfettiRain } from '../hooks/useConfettiRain.ts'
 import siuuuSound from '../assets/sounds/siuuu.mp3'
+import { useFireRain } from '../hooks/useFireRain.ts'
 import { useAuth0 } from '@auth0/auth0-react'
 import { submitGame } from '../apis/words.ts'
 
@@ -40,6 +41,8 @@ function App() {
   // Gives us a function to trigger the confetti burst on a win
   const { triggerConfettiRain } = useConfettiRain()
 
+  const { triggerFireRain } = useFireRain()
+
   const [currentGuess, setCurrentGuess] = useState('')
 
   const [letterStatuses, setLetterStatuses] = useState<
@@ -50,6 +53,8 @@ function App() {
   // Tracks whether the end-of-round popup is currently visible (separate from
   // gameStatus so the player can manually close it without losing their result)
   const [showPopup, setShowPopup] = useState(false)
+
+  const [revealedWord, setRevealedWord] = useState<string | null>(null)
 
   const { getAccessTokenSilently, isAuthenticated } = useAuth0()
   const [startTime, setStartTime] = useState<Date | null>(null)
@@ -67,6 +72,7 @@ function App() {
     setWinMessage(null)
     setGameStatus('playing')
     setShowPopup(false)
+    setRevealedWord(null)
   }
 
   function updateLetterStatuses(guess: string, result: LetterResult[]) {
@@ -91,9 +97,10 @@ function App() {
 
   // This function gets called by GiveUp once the word has been revealed
   // It marks the current round as given up
-  function handleGiveUp() {
+  function handleGiveUp(word: string) {
     setGameStatus('gaveUp')
     setShowPopup(true)
+    setRevealedWord(word)
   }
 
   // Returns true only if every letter in the result came back 'correct'
@@ -134,6 +141,7 @@ function App() {
         { wordId, guess: currentGuess },
         {
           onSuccess: (data) => {
+            triggerFireRain()
             setGuesses((prev) => [
               ...prev,
               { guess: currentGuess, result: data.result },
@@ -199,14 +207,30 @@ function App() {
 
       <Popup isOpen={showPopup} onClose={() => setShowPopup(false)}>
         {gameStatus === 'won' && (
-          <p className="text-lg font-bold text-green-600">
-            {winMessage ?? 'You got it!'}
-          </p>
+          <>
+            <h2 className="text-xl font-bold mb-2 text-center">
+              Took you long enough. Can we speed it up next time?
+            </h2>
+            <p className="text-lg font-bold text-green-600 text-center">
+              {winMessage ?? 'You got it!'}
+            </p>
+          </>
         )}
         {gameStatus === 'gaveUp' && (
-          <p className="text-lg font-bold text-gray-600">
-            Better luck next time!
-          </p>
+          <>
+            <p className="text-lg font-bold text-yellow-500 text-center">
+              Achievement unlocked: Giving Up!
+            </p>
+            <p className="text-gray-400 text-center">
+              Think even kam could do better then you and shes not the smartest
+              pea in the pod!
+            </p>
+            {revealedWord && (
+              <p className="mt-2 text-green-600 text-center">
+                The word was: <strong>{revealedWord}</strong>
+              </p>
+            )}
+          </>
         )}
       </Popup>
 

@@ -18,7 +18,8 @@ function Popup({
       onClick={onClose}
     >
       <div
-        className="rounded-lg bg-white p-6 shadow-lg dark:bg-gray-800 dark:text-white"
+        // Matches the header's glassy dark background style
+        className="rounded-lg bg-gray-500/30 backdrop-blur-sm text-green-600 p-6 shadow-lg"
         role="dialog"
         aria-modal="true"
         // Stop clicks inside the popup from closing it (only the background should)
@@ -27,7 +28,7 @@ function Popup({
         <button
           onClick={onClose}
           aria-label="Close"
-          className="mb-2 float-right text-gray-500 hover:text-gray-800 dark:text-gray-300"
+          className="mb-2 float-right text-green-600 hover:opacity-75"
         >
           ✕
         </button>
