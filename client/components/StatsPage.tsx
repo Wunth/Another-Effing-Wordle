@@ -1,9 +1,33 @@
 import { Link } from 'react-router'
-import { useStats } from '../hooks/use-stats.ts'
+import { useAuth0 } from '@auth0/auth0-react'
+import { useGameStats } from '../hooks/useGameStats.ts'
 
-// A dedicated page for viewing personal stats, reached via /stats
 function StatsPage() {
-  const { gamesPlayed, wins, averageGuesses } = useStats()
+  const { isAuthenticated } = useAuth0()
+  const { data, isPending, isError } = useGameStats()
+
+  if (!isAuthenticated) {
+    return (
+      <div className="flex min-h-screen flex-col items-center justify-center gap-6">
+        <h1 className="text-6xl font-bold text-yellow-400">Your Stats</h1>
+        <p className="text-xl text-gray-400">Log in to track your stats.</p>
+        <Link
+          to="/"
+          className="rounded-lg bg-blue-500 px-6 py-3 text-lg uppercase text-white hover:bg-blue-600"
+          style={{ fontFamily: 'Bungee, cursive' }}
+        >
+          Back to Game
+        </Link>
+      </div>
+    )
+  }
+
+  if (isPending) return <p>Loading...</p>
+  if (isError) return <p>Could not load stats</p>
+
+  const gamesPlayed = data.gamesPlayed
+  const wins = data.gamesPlayed
+  const averageGuesses = data.averageGuesses
 
   return (
     <div className="flex min-h-screen flex-col items-center justify-center gap-12">
@@ -19,7 +43,7 @@ function StatsPage() {
         </div>
         <div className="flex flex-col">
           <span className="text-8xl font-bold text-white">
-            {averageGuesses}
+            {averageGuesses.toFixed(1)}
           </span>
           <span className="text-xl text-gray-400">Avg Guesses</span>
         </div>
@@ -27,7 +51,7 @@ function StatsPage() {
 
       <Link
         to="/"
-        className="rounded-lg bg-blue-500 px-6 py-3 text-lg font-bold uppercase text-white hover:bg-blue-600"
+        className="rounded-lg bg-blue-500 px-6 py-3 text-lg uppercase text-white hover:bg-blue-600"
         style={{ fontFamily: 'Bungee, cursive' }}
       >
         Back to Game

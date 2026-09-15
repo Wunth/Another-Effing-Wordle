@@ -3,8 +3,6 @@ export async function seed(knex) {
   await knex('words').del()
   await knex('users').del()
 
-  await knex('users').insert([{ name: 'anonymous' }])
-
   await knex('words').insert([
     { word: 'phuck', success_message: 'Well done - you didnt phuck it up!' },
     {
@@ -59,8 +57,8 @@ export async function seed(knex) {
       success_message: 'What the bloodyhayew was that all about?',
     },
     {
-      word: 'dafuk',
-      success_message: 'What dafuk was that all about?',
+      word: 'dafuque',
+      success_message: 'What dafuque was that all about?',
     },
   ])
 }
