@@ -8,7 +8,7 @@ import bruhSound from '../assets/sounds/bruh.mp3'
 // App.tsx passes it down, since App is tracking it
 interface GiveUpProps {
   wordId: number
-  onGiveUp: () => void
+  onGiveUp: (word: string) => void
   isRoundActive: boolean
 }
 
@@ -17,20 +17,19 @@ const wrongSound = new Audio(bruhSound)
 
 function GiveUp({ wordId, onGiveUp, isRoundActive }: GiveUpProps) {
   // mutate: call this function to trigger revealing the word
-  // data: the revealed word
   // isPending: true while the reveal request is in progress
   // isError: true if the reveal request failed
-  const { mutate, data, isPending, isError } = useGiveUp()
+  const { mutate, isPending, isError } = useGiveUp()
 
   return (
     <div className="flex flex-col items-center gap-2">
-      {/* clicking Give Up calls mutate with this word's id, triggering revealWord(id) */}
+      {/* clicking Give Up calls mutate with this word's id, revealing it and passing it up to App */}
       <button
         onClick={() => {
           wrongSound.play()
           mutate(wordId, {
-            onSuccess: () => {
-              onGiveUp()
+            onSuccess: (revealedWord) => {
+              onGiveUp(revealedWord)
             },
           })
         }}
@@ -44,12 +43,6 @@ function GiveUp({ wordId, onGiveUp, isRoundActive }: GiveUpProps) {
 
       {isPending && <p>Loading...</p>}
       {isError && <p>Could not reveal the word</p>}
-      {data && (
-        <>
-          <p>The word was:</p>
-          <p className="giveUpReveal">{data}</p>
-        </>
-      )}
     </div>
   )
 }
