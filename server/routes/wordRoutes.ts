@@ -1,10 +1,12 @@
 // This file has the route that fetches a random word from the db
 
 import { Router } from 'express'
-
 import * as db from '../db/words.ts'
-
 import { checkWord } from './routeFunctions/checkWord.ts'
+
+import { getUserByAuth0Id, addUser } from '../db/users.ts'
+import { createGameRecord } from '../db/games.ts'
+import { optionalCheckJwt, JwtRequest } from '../auth.ts'
 
 const router = Router()
 
@@ -33,18 +35,11 @@ router.get('/random', async (req, res) => {
 // When the user gives up, they request the answer for their specific word by its id
 router.get('/:id/reveal', async (req, res) => {
   try {
-    // grab the id from the URL & convert to a number
     const id = Number(req.params.id)
-
-    // look up that specific word in the db by its id
     const wordRow = await db.getWordById(id)
-
-    // if no word matches that id, let the frontend know instead of sending nothing back
     if (!wordRow) {
       return res.status(404).json({ message: 'Word not found' })
     }
-
-    // pull just the text out of the row & send back to user as the "word"
     res.json({ word: wordRow.word })
   } catch (error) {
     console.log(error)
@@ -56,14 +51,10 @@ router.get('/:id/reveal', async (req, res) => {
 router.post('/check', async (req, res) => {
   try {
     const { wordId, guess } = req.body
-    // call the db function to get the correct word and wait
     const correctWord = await db.getWordById(wordId)
-
-    // if no word matches that id, send a clear error instead of crashing
     if (!correctWord) {
       return res.status(404).json({ message: 'Word not found in the database' })
     }
-
     if (correctWord.word == guess) {
       res.json({
         result: Array(guess.length).fill('correct'),
@@ -71,14 +62,38 @@ router.post('/check', async (req, res) => {
       })
       return
     }
-
-    // call the db function to check the guess and wait
     const result = checkWord(correctWord.word, guess)
-
-    // send the result to the frontend
     res.json({ result })
+  } catch (error) {
+    console.log(error)
+    res.status(500).json({ message: 'Something went wrong' })
+  }
+})
 
-    // if it fails or crashes, show an error message
+// When a round finishes (win or give-up), submit the complete record in one go.
+// Guests never hit this — the client only calls it when logged in.
+router.post('/games', optionalCheckJwt, async (req: JwtRequest, res) => {
+  try {
+    const auth0Id = req.auth?.sub
+    if (!auth0Id) {
+      return res.status(401).json({ message: 'Login required' })
+    }
+
+    const { wordId, startTime, endTime } = req.body
+
+    let user = await getUserByAuth0Id(auth0Id)
+    if (!user) {
+      user = await addUser({ auth0_id: auth0Id, name: auth0Id })
+    }
+
+    const game = await createGameRecord({
+      wordId,
+      userId: user.id,
+      startTime,
+      endTime,
+    })
+
+    res.json(game)
   } catch (error) {
     console.log(error)
     res.status(500).json({ message: 'Something went wrong' })

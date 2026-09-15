@@ -1,21 +1,17 @@
 import request from 'superagent'
 import { RandomWord, Word, CheckGuessResult } from '../../models/word'
 
-// builds the base address for every API call
 const rootURL = new URL(`/api/v1`, document.baseURI)
 
 // function calling the backend/server to get one random word
 export async function getRandomWord(): Promise<RandomWord> {
-  // send a GET request to /api/v1/words/random and wait for the server to respond
   const response = await request.get(`${rootURL}/words/random`)
-  // backend sends a JSON shaped response object
   return response.body as RandomWord
 }
 
 // function calling the backend/server to get a word by its id
 // used when the player clicks give up & needs to see what the word is
 export async function revealWord(id: number): Promise<Word | string> {
-  // send a GET request to /api/v1/words/:id/reveal & wait for the server to respond
   const response = await request.get(`${rootURL}/words/${id}/reveal`)
   return response.body.word
 }
@@ -25,9 +21,23 @@ export async function checkGuess(
   wordId: number,
   guess: string,
 ): Promise<CheckGuessResult> {
-  // send a POST request to /api/v1/words/check with the wordId and guess
   const response = await request
     .post(`${rootURL}/words/check`)
     .send({ wordId, guess })
   return response.body as CheckGuessResult
+}
+
+// submits a completed game (win only) — records how long it took and which word
+export async function submitGame(
+  {
+    wordId,
+    startTime,
+    endTime,
+  }: { wordId: number; startTime: Date; endTime: Date },
+  token: string,
+): Promise<void> {
+  await request
+    .post(`${rootURL}/words/games`)
+    .set('Authorization', `Bearer ${token}`)
+    .send({ wordId, startTime, endTime })
 }
