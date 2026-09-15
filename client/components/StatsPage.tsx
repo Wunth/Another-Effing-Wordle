@@ -6,7 +6,7 @@ function StatsPage() {
   const { gamesPlayed, wins, averageGuesses } = useStats()
 
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center gap-12">
+    <main className="flex min-h-screen flex-col items-center justify-center gap-12">
       <h1 className="text-6xl font-bold text-yellow-400">Your Stats</h1>
       <div className="flex flex-row gap-24 text-center">
         <div className="flex flex-col">
@@ -32,7 +32,7 @@ function StatsPage() {
       >
         Back to Game
       </Link>
-    </div>
+    </main>
   )
 }
 
