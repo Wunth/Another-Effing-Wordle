@@ -5,8 +5,13 @@ import * as db from '../db/words.ts'
 import { checkWord } from './routeFunctions/checkWord.ts'
 
 import { getUserByAuth0Id, addUser } from '../db/users.ts'
-import { createGameRecord } from '../db/games.ts'
-import { optionalCheckJwt, JwtRequest } from '../auth.ts'
+import checkJwt, { optionalCheckJwt, JwtRequest } from '../auth.ts'
+
+import {
+  createGameRecord,
+  getGamesByUserId,
+  getAverageGuessesForUser,
+} from '../db/games.ts'
 
 const router = Router()
 
@@ -94,6 +99,29 @@ router.post('/games', optionalCheckJwt, async (req: JwtRequest, res) => {
     })
 
     res.json(game)
+  } catch (error) {
+    console.log(error)
+    res.status(500).json({ message: 'Something went wrong' })
+  }
+})
+
+router.get('/stats', checkJwt, async (req: JwtRequest, res) => {
+  try {
+    const auth0Id = req.auth?.sub
+    const user = await getUserByAuth0Id(auth0Id!)
+
+    if (!user) {
+      return res.json({ gamesPlayed: 0, games: [], averageGuesses: 0 })
+    }
+
+    const games = await getGamesByUserId(user.id)
+    const averageGuesses = await getAverageGuessesForUser(user.id)
+
+    res.json({
+      gamesPlayed: games.length,
+      games,
+      averageGuesses,
+    })
   } catch (error) {
     console.log(error)
     res.status(500).json({ message: 'Something went wrong' })

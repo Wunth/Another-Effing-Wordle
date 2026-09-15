@@ -26,18 +26,3 @@ export async function checkGuess(
     .send({ wordId, guess })
   return response.body as CheckGuessResult
 }
-
-// submits a completed game (win only) — records how long it took and which word
-export async function submitGame(
-  {
-    wordId,
-    startTime,
-    endTime,
-  }: { wordId: number; startTime: Date; endTime: Date },
-  token: string,
-): Promise<void> {
-  await request
-    .post(`${rootURL}/words/games`)
-    .set('Authorization', `Bearer ${token}`)
-    .send({ wordId, startTime, endTime })
-}
