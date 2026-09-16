@@ -14,7 +14,7 @@ function LeaderboardPage() {
   return (
     <main className="flex min-h-screen flex-col items-center justify-center gap-8">
       <h1
-        className="text-6xl font-bold text-yellow-400"
+        className="text-6xl text-yellow-400"
         style={{ fontFamily: 'Bungee, cursive' }}
       >
         Leaderboard
