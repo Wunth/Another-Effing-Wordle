@@ -46,7 +46,10 @@ function Leaderboard({ entries, currentUserId, limit }: LeaderboardProps) {
   }
 
   return (
-    <table className="w-full max-w-2xl border-collapse text-left">
+    <table
+      className="w-full max-w-2xl border-collapse text-left"
+      style={{ fontFamily: 'Fredoka, sans-serif' }}
+    >
       <thead>
         <tr className="border-b-2 border-yellow-400 text-yellow-400">
           <th className="px-4 py-2 text-lg" style={{ fontFamily: 'Bungee, cursive' }}>

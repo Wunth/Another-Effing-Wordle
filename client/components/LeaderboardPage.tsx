@@ -5,7 +5,7 @@ import Leaderboard from './Leaderboard.tsx'
 import { useLeaderboard, useMyRank } from '../hooks/useLeaderboard.ts'
 
 function LeaderboardPage() {
-  const { data, isPending, isError } = useLeaderboard(10)
+  const { data, isPending, isError } = useLeaderboard(100)
   const { data: me } = useMyRank()
 
   if (isPending) return <p>Loading...</p>
@@ -13,7 +13,12 @@ function LeaderboardPage() {
 
   return (
     <main className="flex min-h-screen flex-col items-center justify-center gap-8">
-      <h1 className="text-6xl font-bold text-yellow-400">Leaderboard</h1>
+      <h1
+        className="text-6xl font-bold text-yellow-400"
+        style={{ fontFamily: 'Bungee, cursive' }}
+      >
+        Leaderboard
+      </h1>
       {me?.best && (
         <p className="text-gray-300">
           Your best: rank #{me.rank} — {me.best.word} in{' '}

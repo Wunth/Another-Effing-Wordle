@@ -9,7 +9,7 @@ import checkJwt, { JwtRequest } from '../auth.ts'
 
 const router = Router()
 
-const DEFAULT_LIMIT = 10
+const DEFAULT_LIMIT = 100
 const MAX_LIMIT = 100
 
 // GET /?limit=10 — public board of the fastest wins

@@ -4,7 +4,7 @@ import { getLeaderboard, getMyRank } from '../apis/leaderboard.ts'
 
 // The public fastest-wins board. Works logged out.
 // queryKey includes the limit so different sizes cache separately.
-export function useLeaderboard(limit = 10) {
+export function useLeaderboard(limit = 100) {
   return useQuery({
     queryKey: ['leaderboard', limit],
     queryFn: () => getLeaderboard(limit),
