@@ -3,12 +3,14 @@ import { createRoutesFromElements, Route } from 'react-router'
 import App from './components/App'
 import StatsPage from './components/StatsPage.tsx'
 import LeaderboardPage from './components/LeaderboardPage.tsx'
+import Register from './components/Register.tsx'
 
 const routes = createRoutesFromElements(
   <>
     <Route index element={<App />} />
     <Route path="stats" element={<StatsPage />} />
     <Route path="leaderboard" element={<LeaderboardPage />} />
+    <Route path="register" element={<Register />} />
   </>,
 )
 

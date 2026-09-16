@@ -4,7 +4,7 @@ import { Router } from 'express'
 import * as db from '../db/words.ts'
 import { checkWord } from './routeFunctions/checkWord.ts'
 
-import { getUserByAuth0Id, addUser } from '../db/users.ts'
+import { getUserByAuth0Id, addUser, setUsername } from '../db/users.ts'
 import checkJwt, { optionalCheckJwt, JwtRequest } from '../auth.ts'
 import connection from '../db/connection.ts'
 import { createGuess } from '../db/guess.ts'
@@ -77,7 +77,7 @@ router.post('/check', optionalCheckJwt, async (req: JwtRequest, res) => {
 
       let user = await getUserByAuth0Id(auth0Id)
       if (!user) {
-        user = await addUser({ auth0_id: auth0Id, name: auth0Id })
+        user = await addUser({ auth0_id: auth0Id, name: '' })
       }
 
       await connection.transaction(async (trx) => {
@@ -114,37 +114,7 @@ router.post('/check', optionalCheckJwt, async (req: JwtRequest, res) => {
     res.status(500).json({ message: 'Something went wrong' })
   }
 })
-/*
-// When a round finishes (win or give-up), submit the complete record in one go.
-// Guests never hit this — the client only calls it when logged in.
-router.post('/games', optionalCheckJwt, async (req: JwtRequest, res) => {
-  try {
-    const auth0Id = req.auth?.sub
-    if (!auth0Id) {
-      return res.status(401).json({ message: 'Login required' })
-    }
 
-    const { wordId, startTime, endTime } = req.body
-
-    let user = await getUserByAuth0Id(auth0Id)
-    if (!user) {
-      user = await addUser({ auth0_id: auth0Id, name: auth0Id })
-    }
-
-    const game = await createGameRecord({
-      wordId,
-      userId: user.id,
-      startTime,
-      endTime,
-    })
-
-    res.json(game)
-  } catch (error) {
-    console.log(error)
-    res.status(500).json({ message: 'Something went wrong' })
-  }
-})
-*/
 router.get('/stats', checkJwt, async (req: JwtRequest, res) => {
   try {
     const auth0Id = req.auth?.sub
@@ -162,6 +132,45 @@ router.get('/stats', checkJwt, async (req: JwtRequest, res) => {
       games,
       averageGuesses,
     })
+  } catch (error) {
+    console.log(error)
+    res.status(500).json({ message: 'Something went wrong' })
+  }
+})
+
+router.patch('/users/me', checkJwt, async (req: JwtRequest, res) => {
+  try {
+    const auth0Id = req.auth?.sub
+    if (!auth0Id) {
+      return res.status(401).json({ message: 'Login required' })
+    }
+    const { username } = req.body
+    if (!username || typeof username !== 'string' || !username.trim()) {
+      return res.status(400).json({ message: 'Username is required' })
+    }
+    if (username.trim().length > 20) {
+      return res
+        .status(400)
+        .json({ message: 'Username must be 20 characters or fewer' })
+    }
+
+    const user = await setUsername({ auth0Id, name: username.trim() })
+    res.json(user)
+  } catch (error) {
+    console.log(error)
+    res.status(500).json({ message: 'Something went wrong' })
+  }
+})
+
+router.get('/users/me', checkJwt, async (req: JwtRequest, res) => {
+  try {
+    const auth0Id = req.auth?.sub
+    if (!auth0Id) {
+      return res.status(401).json({ message: 'Login required' })
+    }
+
+    const user = await getUserByAuth0Id(auth0Id)
+    res.json({ name: user?.name || null })
   } catch (error) {
     console.log(error)
     res.status(500).json({ message: 'Something went wrong' })
