@@ -45,14 +45,6 @@ function Account() {
           Sign in
         </button>
       </IfNotAuthenticated>
-      {/* Leaderboard is public — visible to everyone, not just logged-in users */}
-      <Link
-        to="/leaderboard"
-        className="rounded-lg bg-blue-500 px-6 py-3 text-lg uppercase text-white hover:bg-blue-600"
-        style={{ fontFamily: 'Bungee, cursive' }}
-      >
-        Leaderboard
-      </Link>
     </>
   )
 }
