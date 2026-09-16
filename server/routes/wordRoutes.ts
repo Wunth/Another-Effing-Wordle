@@ -57,7 +57,7 @@ router.get('/:id/reveal', async (req, res) => {
 // When the user submits a guess, check it against the correct word
 router.post('/check', optionalCheckJwt, async (req: JwtRequest, res) => {
   try {
-    const { wordId, guess, gameId, startTime } = req.body
+    const { wordId, guess, gameId, startTime, email } = req.body
     const correctWord = await db.getWordById(wordId)
     if (!correctWord) {
       return res.status(404).json({ message: 'Word not found in the database' })
@@ -71,13 +71,12 @@ router.post('/check', optionalCheckJwt, async (req: JwtRequest, res) => {
     const auth0Id = req.auth?.sub
     let recordedGameId: number | undefined = gameId
 
-    // Guests: identical behavior to before, no recording at all
     if (auth0Id) {
       const timeSubmitted = new Date()
 
       let user = await getUserByAuth0Id(auth0Id)
       if (!user) {
-        user = await addUser({ auth0_id: auth0Id, name: '' })
+        user = await addUser({ auth0_id: auth0Id, name: email ?? '' })
       }
 
       await connection.transaction(async (trx) => {
