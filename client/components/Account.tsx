@@ -1,10 +1,11 @@
 import { IfAuthenticated, IfNotAuthenticated } from './Authenticated.tsx'
 import { useAuth0 } from '@auth0/auth0-react'
 import { Link } from 'react-router'
+import { useMe } from '../hooks/useMe.ts'
 
 function Account() {
   const { logout, loginWithRedirect, user } = useAuth0()
-  console.log('Auth0 user:', user)
+  const { data: me } = useMe()
 
   const handleSignOut = () => {
     logout()
@@ -21,7 +22,7 @@ function Account() {
         {user && (
           <p style={{ textAlign: 'center' }}>
             Signed in <br />
-            {user?.email}
+            {me?.name || user?.email}
           </p>
         )}
         <Link
@@ -37,6 +38,13 @@ function Account() {
           style={{ fontFamily: 'Bungee, cursive', fontSize: '17px' }}
         >
           Leaderboard
+        </Link>
+        <Link
+          to="/register"
+          className="w-41 rounded-lg bg-blue-500 px-6 py-3 text-lg uppercase text-white hover:bg-blue-600"
+          style={{ fontFamily: 'Bungee, cursive' }}
+        >
+          Change Username
         </Link>
         <button className="btn_account sign_out" onClick={handleSignOut}>
           Sign out
