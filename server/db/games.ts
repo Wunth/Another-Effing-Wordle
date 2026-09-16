@@ -1,5 +1,5 @@
 import connection from './connection.ts'
-
+/*
 export async function createGameRecord(
   {
     wordId,
@@ -24,7 +24,7 @@ export async function createGameRecord(
     .returning('*')
   return game
 }
-
+*/
 export async function getGamesByUserId(userId: number, db = connection) {
   return db('games').where({ user_id: userId }).orderBy('time_start', 'desc')
 }
@@ -48,4 +48,39 @@ export async function getAverageGuessesForUser(
     0,
   )
   return totalGuesses / gameIds.length
+}
+
+export async function startGameRecord(
+  {
+    wordId,
+    userId,
+    startTime,
+  }: {
+    wordId: number
+    userId: number
+    startTime: Date
+  },
+  db = connection,
+) {
+  const [game] = await db('games')
+    .insert({
+      word_id: wordId,
+      user_id: userId,
+      time_start: startTime,
+      time_end: null,
+    })
+    .returning('*')
+  return game
+}
+
+export async function setGameEndTime(
+  gameId: number,
+  endTime: Date,
+  db = connection,
+) {
+  const [game] = await db('games')
+    .where({ id: gameId })
+    .update({ time_end: endTime })
+    .returning('*')
+  return game
 }

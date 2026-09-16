@@ -12,8 +12,6 @@ import Account from './Account.tsx'
 import { useConfettiRain } from '../hooks/useConfettiRain.ts'
 import siuuuSound from '../assets/sounds/siuuu.mp3'
 import { useFireRain } from '../hooks/useFireRain.ts'
-import { useAuth0 } from '@auth0/auth0-react'
-import { submitGame } from '../apis/games.ts'
 
 const winSound = new Audio(siuuuSound)
 
@@ -55,9 +53,8 @@ function App() {
   const [showPopup, setShowPopup] = useState(false)
 
   const [revealedWord, setRevealedWord] = useState<string | null>(null)
-
-  const { getAccessTokenSilently, isAuthenticated } = useAuth0()
   const [startTime, setStartTime] = useState<Date | null>(null)
+  const [gameId, setGameId] = useState<number | null>(null)
 
   // This function gets called by NewGame once a new word has loaded
   // It saves the word's id/length and resets gameStatus + currentGuess + guesses
@@ -66,6 +63,7 @@ function App() {
     setWordId(id)
     setWordLength(length)
     setStartTime(new Date())
+    setGameId(null)
     setCurrentGuess('')
     setGuesses([])
     setLetterStatuses({})
@@ -110,18 +108,15 @@ function App() {
 
   // This function gets called whenever a guess result comes back from the server
   // Uses isWinningResult to check the result and updates gameStatus if it's a win
-  async function handleWin(result: LetterResult[]) {
+  function handleWin(result: LetterResult[]) {
     if (isWinningResult(result)) {
       winSound.play()
       setGameStatus('won')
       setShowPopup(true)
       triggerConfettiRain()
-
-      // only logged-in players get their win recorded
-      if (isAuthenticated && wordId !== null && startTime !== null) {
-        const token = await getAccessTokenSilently()
-        await submitGame({ wordId, startTime, endTime: new Date() }, token)
-      }
+      // Win recording now happens server-side as part of /check itself
+      // (games row + final guess + time_end all set in one transaction),
+      // so there's nothing left to submit from here.
     }
   }
 
@@ -138,7 +133,12 @@ function App() {
       if (currentGuess.length !== wordLength || wordId === null) return
 
       submitGuess(
-        { wordId, guess: currentGuess },
+        {
+          wordId,
+          guess: currentGuess,
+          gameId: gameId ?? undefined,
+          startTime: startTime ?? undefined,
+        },
         {
           onSuccess: (data) => {
             triggerFireRain()
@@ -148,6 +148,9 @@ function App() {
             ])
             updateLetterStatuses(currentGuess, data.result)
             setCurrentGuess('')
+            if (data.gameId !== undefined) {
+              setGameId(data.gameId)
+            }
             handleWin(data.result)
             if (data.message) {
               setWinMessage(data.message)

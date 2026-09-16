@@ -17,12 +17,30 @@ export async function revealWord(id: number): Promise<Word | string> {
 }
 
 // function calling the backend/server to check a guess against the correct word
+// gameId/startTime/token are only meaningful for logged-in players — the server
+// ignores them (and records nothing) for guests, where gameId is undefined
 export async function checkGuess(
-  wordId: number,
-  guess: string,
+  {
+    wordId,
+    guess,
+    gameId,
+    startTime,
+  }: {
+    wordId: number
+    guess: string
+    gameId?: number
+    startTime?: Date
+  },
+  token?: string,
 ): Promise<CheckGuessResult> {
-  const response = await request
+  const req = request
     .post(`${rootURL}/words/check`)
-    .send({ wordId, guess })
+    .send({ wordId, guess, gameId, startTime })
+
+  if (token) {
+    req.set('Authorization', `Bearer ${token}`)
+  }
+
+  const response = await req
   return response.body as CheckGuessResult
 }

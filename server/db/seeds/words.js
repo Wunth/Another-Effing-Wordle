@@ -60,5 +60,13 @@ export async function seed(knex) {
       word: 'dafuque',
       success_message: 'What dafuque was that all about?',
     },
+    {
+      word: 'farquad',
+      success_message: "That's Lord Farquad to you!",
+    },
+    {
+      word: 'fuqt',
+      success_message: "However you want to spell it... we're fuqt",
+    },
   ])
 }
