@@ -6,11 +6,13 @@ import { checkWord } from './routeFunctions/checkWord.ts'
 
 import { getUserByAuth0Id, addUser } from '../db/users.ts'
 import checkJwt, { optionalCheckJwt, JwtRequest } from '../auth.ts'
-
+import connection from '../db/connection.ts'
+import { createGuess } from '../db/guess.ts'
 import {
-  createGameRecord,
   getGamesByUserId,
   getAverageGuessesForUser,
+  startGameRecord,
+  setGameEndTime,
 } from '../db/games.ts'
 
 const router = Router()
@@ -53,28 +55,66 @@ router.get('/:id/reveal', async (req, res) => {
 })
 
 // When the user submits a guess, check it against the correct word
-router.post('/check', async (req, res) => {
+router.post('/check', optionalCheckJwt, async (req: JwtRequest, res) => {
   try {
-    const { wordId, guess } = req.body
+    const { wordId, guess, gameId, startTime } = req.body
     const correctWord = await db.getWordById(wordId)
     if (!correctWord) {
       return res.status(404).json({ message: 'Word not found in the database' })
     }
-    if (correctWord.word == guess) {
-      res.json({
-        result: Array(guess.length).fill('correct'),
-        message: correctWord.success_message,
+
+    const isWin = correctWord.word === guess
+    const result = isWin
+      ? Array(guess.length).fill('correct')
+      : checkWord(correctWord.word, guess)
+
+    const auth0Id = req.auth?.sub
+    let recordedGameId: number | undefined = gameId
+
+    // Guests: identical behavior to before, no recording at all
+    if (auth0Id) {
+      const timeSubmitted = new Date()
+
+      let user = await getUserByAuth0Id(auth0Id)
+      if (!user) {
+        user = await addUser({ auth0_id: auth0Id, name: auth0Id })
+      }
+
+      await connection.transaction(async (trx) => {
+        if (!recordedGameId) {
+          const game = await startGameRecord(
+            {
+              wordId,
+              userId: user.id,
+              startTime: startTime ? new Date(startTime) : timeSubmitted,
+            },
+            trx,
+          )
+          recordedGameId = game.id
+        }
+
+        await createGuess(
+          { gamesId: recordedGameId!, guess, timeSubmitted },
+          trx,
+        )
+
+        if (isWin) {
+          await setGameEndTime(recordedGameId!, timeSubmitted, trx)
+        }
       })
-      return
     }
-    const result = checkWord(correctWord.word, guess)
-    res.json({ result })
+
+    res.json({
+      result,
+      ...(isWin ? { message: correctWord.success_message } : {}),
+      ...(auth0Id ? { gameId: recordedGameId } : {}),
+    })
   } catch (error) {
     console.log(error)
     res.status(500).json({ message: 'Something went wrong' })
   }
 })
-
+/*
 // When a round finishes (win or give-up), submit the complete record in one go.
 // Guests never hit this — the client only calls it when logged in.
 router.post('/games', optionalCheckJwt, async (req: JwtRequest, res) => {
@@ -104,7 +144,7 @@ router.post('/games', optionalCheckJwt, async (req: JwtRequest, res) => {
     res.status(500).json({ message: 'Something went wrong' })
   }
 })
-
+*/
 router.get('/stats', checkJwt, async (req: JwtRequest, res) => {
   try {
     const auth0Id = req.auth?.sub
