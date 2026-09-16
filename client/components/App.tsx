@@ -11,7 +11,7 @@ import { LetterResult } from '../../models/word.ts'
 import Account from './Account.tsx'
 import { useConfettiRain } from '../hooks/useConfettiRain.ts'
 import siuuuSound from '../assets/sounds/siuuu.mp3'
-import { useFireRain } from '../hooks/useFireRain.ts'
+import { getRandomGiveUpMessage } from '../utils/getGiveUpMessage.ts'
 
 const winSound = new Audio(siuuuSound)
 
@@ -39,8 +39,6 @@ function App() {
   // Gives us a function to trigger the confetti burst on a win
   const { triggerConfettiRain } = useConfettiRain()
 
-  const { triggerFireRain } = useFireRain()
-
   const [currentGuess, setCurrentGuess] = useState('')
 
   const [letterStatuses, setLetterStatuses] = useState<
@@ -53,6 +51,7 @@ function App() {
   const [showPopup, setShowPopup] = useState(false)
 
   const [revealedWord, setRevealedWord] = useState<string | null>(null)
+  const [giveUpMessage, setGiveUpMessage] = useState<string | null>(null)
   const [startTime, setStartTime] = useState<Date | null>(null)
   const [gameId, setGameId] = useState<number | null>(null)
 
@@ -71,6 +70,7 @@ function App() {
     setGameStatus('playing')
     setShowPopup(false)
     setRevealedWord(null)
+    setGiveUpMessage(null)
   }
 
   function updateLetterStatuses(guess: string, result: LetterResult[]) {
@@ -99,6 +99,7 @@ function App() {
     setGameStatus('gaveUp')
     setShowPopup(true)
     setRevealedWord(word)
+    setGiveUpMessage(getRandomGiveUpMessage())
   }
 
   // Returns true only if every letter in the result came back 'correct'
@@ -141,7 +142,6 @@ function App() {
         },
         {
           onSuccess: (data) => {
-            triggerFireRain()
             setGuesses((prev) => [
               ...prev,
               { guess: currentGuess, result: data.result },
@@ -218,6 +218,10 @@ function App() {
             <p className="text-lg font-bold text-green-600 text-center">
               {winMessage ?? 'You got it!'}
             </p>
+            <p className="mt-2 text-center">
+              The word was:{' '}
+              <strong>{guesses[guesses.length - 1]?.guess}</strong>
+            </p>
           </>
         )}
         {gameStatus === 'gaveUp' && (
@@ -225,10 +229,7 @@ function App() {
             <p className="text-lg font-bold text-yellow-500 text-center">
               Achievement unlocked: Giving Up!
             </p>
-            <p className="text-gray-400 text-center">
-              Think even kam could do better then you and shes not the smartest
-              pea in the pod!
-            </p>
+            <p className="text-gray-400 text-center">{giveUpMessage}</p>
             {revealedWord && (
               <p className="mt-2 text-green-600 text-center">
                 The word was: <strong>{revealedWord}</strong>
