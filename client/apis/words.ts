@@ -25,17 +25,19 @@ export async function checkGuess(
     guess,
     gameId,
     startTime,
+    email,
   }: {
     wordId: number
     guess: string
     gameId?: number
     startTime?: Date
+    email?: string
   },
   token?: string,
 ): Promise<CheckGuessResult> {
   const req = request
     .post(`${rootURL}/words/check`)
-    .send({ wordId, guess, gameId, startTime })
+    .send({ wordId, guess, gameId, startTime, email })
 
   if (token) {
     req.set('Authorization', `Bearer ${token}`)

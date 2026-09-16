@@ -11,10 +11,12 @@ import Account from './Account.tsx'
 import { useConfettiRain } from '../hooks/useConfettiRain.ts'
 import siuuuSound from '../assets/sounds/siuuu.mp3'
 import { getRandomGiveUpMessage } from '../utils/getGiveUpMessage.ts'
+import { useAuth0 } from '@auth0/auth0-react'
 
 const winSound = new Audio(siuuuSound)
 
 function App() {
+  const { user } = useAuth0()
   // Tracks whether the current round is still being played, was won, or was given up
   // Starts as 'playing' since a new word is immediately in-progress
   const [gameStatus, setGameStatus] = useState<'playing' | 'won' | 'gaveUp'>(
@@ -138,6 +140,7 @@ function App() {
           guess: currentGuess,
           gameId: gameId ?? undefined,
           startTime: startTime ?? undefined,
+          email: user?.email,
         },
         {
           onSuccess: (data) => {

@@ -33,6 +33,7 @@ function LeaderboardPage() {
       >
         Back to Game
       </Link>
+      <p></p>
     </main>
   )
 }
