@@ -171,13 +171,6 @@ function App() {
 
   return (
     <div className="flex flex-col items-center justify-start gap-6 min-h-screen pt-56">
-      <Link
-        to="/leaderboard"
-        className="absolute left-6 top-1/2 -translate-y-1/2 rounded-lg bg-blue-500 px-4 py-2 text-sm uppercase text-white hover:bg-blue-600"
-        style={{ fontFamily: 'Bungee, cursive' }}
-      >
-        Leaderboard
-      </Link>
       <header className="fixed top-4 left-1/2 -translate-x-1/2 w-2/3 flex flex-col items-center justify-center px-6 pt-6 pb-4 z-10 rounded-full bg-gray-500/30 backdrop-blur-sm">
         {/* Leaderboard shortcut pinned to the left edge of the header pill */}
 
@@ -248,8 +241,6 @@ function App() {
           </>
         )}
       </Popup>
-
-      <StatsPanel guessCount={guesses.length} />
 
       <Keyboard
         handleKeyPress={handleKeyPress}

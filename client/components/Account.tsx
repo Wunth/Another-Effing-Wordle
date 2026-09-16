@@ -19,7 +19,7 @@ function Account() {
     <>
       <IfAuthenticated>
         {user && (
-          <p>
+          <p style={{ textAlign: 'center' }}>
             Signed in <br />
             {user?.email}
           </p>
@@ -30,6 +30,13 @@ function Account() {
           style={{ fontFamily: 'Bungee, cursive' }}
         >
           View Stats
+        </Link>
+        <Link
+          to="/leaderboard"
+          className="leaderboard rounded-lg bg-blue-500 px-4 py-2 text-sm uppercase text-white hover:bg-blue-600"
+          style={{ fontFamily: 'Bungee, cursive', fontSize: '17px' }}
+        >
+          Leaderboard
         </Link>
         <button className="btn_account sign_out" onClick={handleSignOut}>
           Sign out
@@ -44,6 +51,13 @@ function Account() {
         >
           Sign in
         </button>
+        <Link
+          to="/leaderboard"
+          className="leaderboard rounded-lg bg-blue-500 px-4 py-2 text-sm uppercase text-white hover:bg-blue-600"
+          style={{ fontFamily: 'Bungee, cursive', fontSize: '17px' }}
+        >
+          Leaderboard
+        </Link>
       </IfNotAuthenticated>
     </>
   )
